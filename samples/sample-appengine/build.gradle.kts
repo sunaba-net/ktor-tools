@@ -5,6 +5,7 @@ val logback_version: String by project
 plugins {
     kotlin("jvm")
     id("io.ktor.plugin")
+    id("com.google.cloud.tools.appengine")
 }
 
 group = "net.sunaba"
@@ -30,4 +31,20 @@ dependencies {
 
 kotlin {
     jvmToolchain(17)
+}
+
+appengine {
+    deploy {
+        projectId = ""
+        version = "GCLOUD_CONFIG"
+        stopPreviousVersion = true
+        promote = true
+    }
+}
+
+
+tasks.register("hoge") {
+    doLast {
+        println(ktor.fatJar.archiveFileName.get())
+    }
 }
