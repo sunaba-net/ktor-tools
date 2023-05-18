@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.sunaba.ktor"
-version = "1.0-SNAPSHOT"
+version = "0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -37,4 +37,22 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+}
+
+
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["kotlin"])
+            artifact(sourcesJar.get())
+        }
+    }
 }
