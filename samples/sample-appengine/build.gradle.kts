@@ -35,16 +35,16 @@ kotlin {
 
 appengine {
     deploy {
-        projectId = ""
+        projectId = "GCLOUD_CONFIG"
         version = "GCLOUD_CONFIG"
-        stopPreviousVersion = true
-        promote = true
+        stopPreviousVersion = false
+        promote = false
     }
 }
 
+tasks.appengineStage.get().dependsOn.add(tasks.buildFatJar.name)
 
-tasks.register("hoge") {
-    doLast {
-        println(ktor.fatJar.archiveFileName.get())
-    }
+tasks.buildFatJar.get().doLast {
+    println(file("${project.buildDir}/libs/${ktor.fatJar.archiveFileName.get()}"))
+    appengine.stage.setArtifact(file("${project.buildDir}/libs/${ktor.fatJar.archiveFileName.get()}"))
 }
