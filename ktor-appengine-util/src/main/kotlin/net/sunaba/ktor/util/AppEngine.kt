@@ -85,6 +85,14 @@ object AppEngine : CoroutineScope {
         getLocation(Env.GOOGLE_CLOUD_PROJECT.value)
     }
 
+    //https://cloud.google.com/tasks/docs/tutorial-gcf
+    // Note that two locations, called europe-west and us-central in App Engine commands, are called, respectively, europe-west1 and us-central1 in Cloud Tasks commands.
+    val currentQueueLocation: String? = when (currentLocation) {
+        "europe-west" -> "europe-west1"
+        "us-central" -> "us-central1"
+        else -> currentLocation
+    }
+
     fun getLocation(projectId: String = Env.GOOGLE_CLOUD_PROJECT.value): String {
         val appengine = Appengine.Builder(
             GoogleNetHttpTransport.newTrustedTransport(),

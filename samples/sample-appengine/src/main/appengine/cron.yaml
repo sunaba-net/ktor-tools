@@ -1,0 +1,4 @@
+cron:
+  - description: "test cron"
+    url: /test_cron
+    schedule: every 24 hours
