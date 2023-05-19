@@ -14,6 +14,8 @@ dependencies {
 
     implementation("io.ktor:ktor-server-core:2.3.0")
     implementation("io.ktor:ktor-client-cio:2.3.0")
+    implementation("io.ktor:ktor-server-auth:2.3.0")
+    implementation("io.ktor:ktor-server-auth-jwt:2.3.0")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
