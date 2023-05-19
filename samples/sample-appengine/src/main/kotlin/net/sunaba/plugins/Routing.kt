@@ -1,13 +1,10 @@
 package net.sunaba.plugins
 
 import com.google.cloud.tasks.v2.AppEngineHttpRequest
-import com.google.cloud.tasks.v2.AppEngineRouting
 import com.google.cloud.tasks.v2.CloudTasksClient
 import com.google.cloud.tasks.v2.HttpMethod
-import com.google.cloud.tasks.v2.Queue
 import com.google.cloud.tasks.v2.QueueName
 import com.google.cloud.tasks.v2.Task
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
@@ -22,7 +19,7 @@ fun Application.configureRouting() {
 
     install(Authentication) {
         googleSignIn(config)
-        appegnineCron("cron")
+        appengineCron("cron")
         appengineTaskQueue("tq")
     }
 
