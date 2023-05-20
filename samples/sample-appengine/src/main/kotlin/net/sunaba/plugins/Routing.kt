@@ -1,26 +1,28 @@
 package net.sunaba.plugins
 
-import com.google.cloud.tasks.v2.AppEngineHttpRequest
-import com.google.cloud.tasks.v2.CloudTasksClient
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.cloud.tasks.v2.*
 import com.google.cloud.tasks.v2.HttpMethod
-import com.google.cloud.tasks.v2.QueueName
-import com.google.cloud.tasks.v2.Task
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.sunaba.ktor.auth.*
+import net.sunaba.ktor.auth.TaskQueuePrincipal
+import net.sunaba.ktor.auth.appengineCron
+import net.sunaba.ktor.auth.appengineTaskQueue
+import net.sunaba.ktor.auth.googlePost
 import net.sunaba.ktor.util.AppEngine
-import java.lang.Exception
 
 fun Application.configureRouting() {
 
-    val clientId:String = ""
+    GoogleCredentials.getApplicationDefault()
+
+    val clientId = System.getProperty("sample.clientId")
 
     install(Authentication) {
-        googleSignIn("google", clientId)
+        googlePost("google", clientId)
         appengineCron("cron")
         appengineTaskQueue("tq")
     }
@@ -85,9 +87,8 @@ fun Routing.googleSignInRoutes(loginPath: String, clientId: String, authProvider
 <div id="g_id_onload"
      data-client_id="${clientId}"
      data-context="signin"
-     data-ux_mode="popup"
-     data-callback="onSignIn"
-     data-auto_select="true"
+     data-ux_mode="redirect"
+     data-login_uri="http://localhost:8080/login"
      data-itp_support="true">
 </div>
 
@@ -99,27 +100,6 @@ fun Routing.googleSignInRoutes(loginPath: String, clientId: String, authProvider
      data-size="large"
      data-logo_alignment="left">
 </div>
-<script>
-  function onSignIn(response) {
-     // decodeJwtResponse() is a custom function defined by you
-     // to decode the credential response.
-             // The ID token you need to pass to your backend:
-        var id_token = response.credential
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '${loginPath}');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + id_token)
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var searchParams = new URLSearchParams(window.location.search)
-                var continueUrl = searchParams.get("continue")
-                if (continueUrl) {
-                    window.location = continueUrl
-                }
-            }
-        };
-        xhr.send();
-  }
-</script>
 </body>
 </html>""", ContentType.Text.Html
         )
@@ -127,8 +107,8 @@ fun Routing.googleSignInRoutes(loginPath: String, clientId: String, authProvider
 
     authenticate(authProviderName) {
         post(loginPath) {
-            val jwtPrincipal = call.authentication.principal<JWTPrincipal>()!!
-            call.respond(HttpStatusCode.OK)
+//            val jwtPrincipal = call.authentication.principal<JWTPrincipal>()!!
+            call.respondText { call.principal<JWTPrincipal>()!!.payload.toString() }
         }
     }
 
