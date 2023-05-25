@@ -64,7 +64,7 @@ fun gcloud(command:List<String>):String? {
     val command = arrayOf(sdk.gCloudPath.toAbsolutePath().toString(), *command.toTypedArray())
     return ProcessBuilder().command(*command).let {
         it.start().let {
-            if (it.waitFor()==0) {
+            if (it.waitFor(10L, TimeUnit.SECONDS) && it.exitValue()==0) {
                 it.inputReader().readLine()
             } else null
         }
